@@ -5,23 +5,6 @@
 
 #include <KittyToRosConverter.h>
 
-void KittiConverter::convertImu() {
-    string folderWithImu = this->pathToFolder + "/oxts/data";
-    string fileWithTimestamps = this->pathToFolder + "/oxts/timestamps.txt";
-
-    std::vector<uint64_t> timestamp = loadTimestampsIntoVector(fileWithTimestamps);
-    for (int frame = 0; frame < timestamp.size(); ++frame) {
-        string fileWithImu = folderWithImu + "/" + getFilenameForEntry(frame) + ".txt";
-        std::ifstream imuData(fileWithImu, std::ios::in);
-        std::string line;
-        std::vector<double> parsed_doubles;
-        std::getline(imuData, line);
-        PoseOxts pose = PoseOxts(line);
-        pose.imu_msg.header.stamp = ros::Time(timestamp[frame] / 1000000000, timestamp[frame] % 1000000000);
-        bag.write("imu", pose.imu_msg.header.stamp, pose.imu_msg);
-
-    }
-}
 
 std::string KittiConverter::getNameOfFile(uint64_t frame) const {
     char buffer[20];
@@ -30,7 +13,7 @@ std::string KittiConverter::getNameOfFile(uint64_t frame) const {
 }
 
 std::vector<uint64_t> KittiConverter::loadTimestampsIntoVector(const std::string &filename) const {
-    std::vector<uint64_t> timestamp_vec;
+    std::vector <uint64_t> timestamp_vec;
     std::ifstream import_file(filename, std::ios::in);
     if (!import_file) {
         std::cerr << "bad timestamp for imu" << std::endl;
@@ -87,8 +70,8 @@ void KittiConverter::convertPointCloud() {
         sensor_msgs::PointCloud2 msg;
         pcl::toROSMsg(*cloudPtr, msg);
         msg.header.stamp = ros::Time(timestamp[frame] / 1000000000, timestamp[frame] % 1000000000);
-        msg.header.frame_id = "horizontal_vlp16_link";
-        bag.write("horizontal_laser_3d", ros::Time(timestamp[frame] / 1000000000, timestamp[frame] % 1000000000), msg);
+        msg.header.frame_id = "velodyne_link";
+        bag.write("velodyne", ros::Time(timestamp[frame] / 1000000000, timestamp[frame] % 1000000000), msg);
     }
 }
 
@@ -101,14 +84,14 @@ void KittiConverter::convertImuAndGps() {
         string fileWithImu = folderWithImu + "/" + getNameOfFile(frame) + ".txt";
         std::ifstream imuData(fileWithImu, std::ios::in);
         std::string line;
-        std::vector<double> parsed_doubles;
         std::getline(imuData, line);
         PoseOxts pose = PoseOxts(line);
+
         pose.imu_msg.header.stamp = ros::Time(timestamp[frame] / 1000000000, timestamp[frame] % 1000000000);
         bag.write("imu", pose.imu_msg.header.stamp, pose.imu_msg);
 
-        pose.gps_msg.header.stamp = ros::Time(timestamp[frame] / 1000000000, timestamp[frame] % 1000000000);
-        bag.write("fix", pose.gps_msg.header.stamp, pose.gps_msg);
+//        pose.gps_msg.header.stamp = ros::Time(timestamp[frame] / 1000000000, timestamp[frame] % 1000000000);
+//        bag.write("fix", pose.gps_msg.header.stamp, pose.gps_msg);
     }
 }
 

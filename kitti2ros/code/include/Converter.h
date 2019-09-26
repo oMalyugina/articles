@@ -44,7 +44,6 @@ public:
         bag.open(outputPath, rosbag::bagmode::Write);
     };
 
-    void convertImu();
     void convertImuAndGps();
 
     void convertPointCloud();
