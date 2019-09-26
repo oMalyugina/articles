@@ -43,7 +43,13 @@ or <a href="https://github.com/ethz-asl/kitti_to_rosbag">one</a>, <a href="https
 I wrote my one only because I don't need calibration, images and Pose in my file.
 
 <p>Step three. Setup ros-cartographer and ru it.</p>
-It is the main part of article.
+It is the main part of article. Here I explain how you can set up cartographer for you data.
+Be careful, ros ans cartogFor kitti is increasing project and configs can be changes very fast.
+You can example of old configuration
+<a href="https://github.com/nobertgmuedu/gmukitti">here</a>,
+<a href="https://github.com/michellevalente/cartographer_kitti">here</a>,
+<a href="https://github.com/inkyusa/cartographer_kitti_config">here</a>,
+and <a href="">here</a>.
 
 <h4>urdf</h4>
 if you go to ../catkin_ws/install_isolated/share/cartographer_ros/urdf/ you find urdf configs. You can write there static position of lidar respectively to robot.
@@ -82,8 +88,19 @@ More aboutr urdf format you can find <a href="http://wiki.ros.org/urdf/Tutorials
 
 Here you describe your system for cartographer. <a href="https://google-cartographer-ros.readthedocs.io/en/latest/configuration.html"> Documentation from developers</a>.
 
+Here you say cartorapher which sensors do you use, provide parametes of sensors (how often per revolution lidar send information).
 
+!!!! Example of my lua configuration with comments in image format.
 
+<h4>launch</h4>
+It is main file. Here you say ros which packages he have to ran with what data and parametrs.
+Here I explain each line of code.
+!!!!!!!!!!!!!!!!!!!
 
+<p>Conclusion</p>
+
+I hope this article was helpful for you.
+
+P. S. if you find any mistake please correct me.
 </body>
 </html>
