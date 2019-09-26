@@ -5,6 +5,85 @@
     <title>Title</title>
 </head>
 <body>
+<p>How you can run ros_cartographer on kitti dataset</p>
+<p>Intorduction</p>
+there is tutorial how to run ros_cartographer on kitti dataset. I was suffered from lack of documentation in these libraries and decided to write instructions for making SLAM using google gartographer.
+<p>who will this article be usefull for</p>
+<ul>
+    <li>You work with point clouds and want to make SLAM</li>
+    <li>You know what ros is</li>
+</ul>
+
+<p>Step one. Installation ros-cartographer.</p>
+There is <a href="https://google-cartographer-ros.readthedocs.io/en/latest/compilation.html">instruction</a>.
+before you should install ros. I believe you have already installed ros.
+<spoiler title="If not there is small description">
+    <ol>
+        <li>install cmake and g++</li>
+        <li>install vtk from source (for this you have to install openGL, freeglut, etc.)</li>
+        <li>install pcl from sorce</li>
+        <li>install ros from apt </li>
+    </ol>
+</spoiler>
+After installation it is a good idea check the system. <a href="https://google-cartographer-ros.readthedocs.io/en/latest/demos.html">Run demo files for cartographer</a>.
+If you cant't you have a problem and I can recomend you only reinstall you system . May be it is a good idea install ubuntu 18 if you have ubuntu 16.
+<a href="https://github.com/googlecartographer/cartographer_ros/issues/1192">Possible problem.</a>
+<p>Step two. Save data from kitti to bag file.</p>
+What data do we need?
+<ul>
+    <li>Point Cloud in format sensor_msgs/PointCloud2. It is neccecary and should be published by topic "point2" if you have only one lidar. If there are 2 or more lidars topics has to be "point2_1", "point2_2" ....</li>
+    <li>Data from imu. Nessesary for 3d. Cartographer use it to define gravity. Should be published in topic "imu" as sensor_msgs/Imu</li>
+    <li>gps. should be published in topic "fix" as sensor_msgs/NavSatFix. But it isn't necessary </li>
+    <li>odmetry, if you have it published in topic "odom".</li>
+    <li>transformation. If you have static transformation like in kitti you can write it in urdf file. If you sensors change position during movement you should publish transformation.</li>
+</ul>
+
+I don't be stop at this moment. You can use <a href="https://github.com/oMalyugina/articles/tree/master/kitti2ros/code">my code</a>
+or <a href="https://github.com/ethz-asl/kitti_to_rosbag">one</a>, <a href="https://github.com/tomas789/kitti2bag">two</a>  from github.
+I wrote my one only because I don't need calibration, images and Pose in my file.
+
+<p>Step three. Setup ros-cartographer and ru it.</p>
+It is the main part of article.
+
+<h4>urdf</h4>
+if you go to ../catkin_ws/install_isolated/share/cartographer_ros/urdf/ you find urdf configs. You can write there static position of lidar respectively to robot.
+Firstly you describe all sensors which you have like "link".
+
+<spoiler title="Example">
+    <code>
+        <link name="imu_link">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" />
+            <geometry>
+                <box size="0.06 0.04 0.02" />
+            </geometry>
+            <material name="orange" />
+        </visual>
+        </link>
+    </code>
+</spoiler>
+
+I create "base_link" - frame of robot. i will look for transformation between map and base_like. About names you can read <a href="https://www.ros.org/reps/rep-0105.html">here</a>.
+
+After it you create elemetn "join" which describe transformation between link's coordinat systems.
+
+<spoiler title="Example">
+    <code>
+        <joint name="velodyne_joint" type="fixed">
+            <parent link="base_link" />
+            <child link="velodyne" />
+            <origin xyz="0.013 0.005 0.375" rpy="-0.18059 0.10620 -0.65625" />
+        </joint>
+    </code>
+</spoiler>
+
+More aboutr urdf format you can find <a href="http://wiki.ros.org/urdf/Tutorials">here</a>.
+<h4>lua</h4>
+
+Here you describe your system for cartographer. <a href="https://google-cartographer-ros.readthedocs.io/en/latest/configuration.html"> Documentation from developers</a>.
+
+
+
 
 </body>
 </html>
